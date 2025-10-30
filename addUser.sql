@@ -1,0 +1,1 @@
+INSERT INTO users (username, email) VALUES ('some_user', 'user@example.com')
