@@ -1,4 +1,4 @@
-name = "oj-proxy-worker"
+name = "cwoi-proxy"
 main = "src/index.ts"
 compatibility_date = "2025-10-28"
 
@@ -13,3 +13,7 @@ OJ_ORIGIN = "https://local.cwoi.com.cn:8443"
 [[build.rules]]
 type = "Text"
 globs = ["**/*.html"]
+
+[[routes]]
+pattern = "cwoi.zigao.ac"
+custom_domain = true
