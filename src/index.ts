@@ -188,10 +188,23 @@ app.post('/api/login', async (c) => {
      ON CONFLICT(username) DO UPDATE SET session_id = ?1, oj_token = ?3`
   ).bind(sessionId, user.username, realUserToken).run();
 
-  // 使用上面计算出的时长来设置 Cookie
-  setCookie(c, 'proxy-session-id', sessionId, {
-    path: '/', httpOnly: true, secure: true, sameSite: 'Lax', maxAge: cookieDuration
-  });
+  const cookieOptions = {
+    path: '/',
+    httpOnly: true,
+    sameSite: 'Lax' as const, // 使用 as const 避免 TypeScript 类型问题
+    maxAge: cookieDuration,
+    // 判断当前环境是否为生产环境（通过检查 DEBUG_MODE 或 URL 协议）
+    // 如果不是 debug 模式 (即生产环境)，则启用 secure
+    secure: c.env.DEBUG_MODE !== 'true', 
+  };
+  
+  // 在 debug 模式下打印 cookie 选项，方便排查
+  const isDebug = c.env.DEBUG_MODE === 'true';
+  if (isDebug) {
+    console.log('[DEBUG] Setting cookie with options:', cookieOptions);
+  }
+
+  setCookie(c, 'proxy-session-id', sessionId, cookieOptions);
   
   // 步骤 2: 创建一个【“假象”的、超长有效期】的 token 给前端
   const fakeAdminToken = createFakeAdminToken(realUserToken, SCRIPT_CONSTANTS.FAKE_TOKEN_LIFETIME_SECONDS);
