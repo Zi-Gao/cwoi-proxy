@@ -143,8 +143,6 @@ function createFakeAdminToken(userToken: string, durationInSeconds: number): str
         payloadObject.exp = nowInSeconds+durationInSeconds;
         payloadObject.type = "Admin";
 
-        console.log(durationInSeconds);
-
         const newPayloadB64 = base64UrlEncode(JSON.stringify(payloadObject));
         return `${header}.${newPayloadB64}.invalid_signature_by_proxy`;
     } catch (error) {
